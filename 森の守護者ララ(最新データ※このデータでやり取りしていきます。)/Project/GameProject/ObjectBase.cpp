@@ -53,7 +53,7 @@ CVector2D ObjectBase::CalcScreenPos(bool grounded) const
 
 	if (Player::IsMove())
 	{
-		testScrollX += 1.0;
+		//testScrollX += 1.0;
 	}
 	else
 	{

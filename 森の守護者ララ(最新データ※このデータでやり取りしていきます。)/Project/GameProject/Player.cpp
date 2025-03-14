@@ -443,9 +443,13 @@ bool Player::IsMove()
 	return s_isMove;
 }
 
+extern float testScrollX ;
+
 // 更新処理
 void Player::Update()
 {
+
+
 	s_isMove = !m_isInvincible;
 	// 無敵状態の時間をカウントダウン
 	if (m_isInvincible)
@@ -479,6 +483,8 @@ void Player::Update()
 		m_moveSpeedY = 0.0f;
 		m_isGrounded = true;
 	}
+
+	testScrollX = m_pos.x;
 
 	// イメージに座標を設定して、アニメーションを更新
 	mp_image->SetPos(CalcScreenPos());

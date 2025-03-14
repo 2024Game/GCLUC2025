@@ -260,6 +260,7 @@ void Init()
 		CVector3D(SCREEN_WIDTH * 0.40f, 100.0f, 150.0f));
 	g_rock = new Rock(0,
 		CVector3D(SCREEN_WIDTH * 0.40f, 100.0f, -150.0f));
+
 	//*/
 
 	/* ‚±‚ê‚¾‚Æ‚¤‚Ü‚­“®‚©‚È‚¢
