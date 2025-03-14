@@ -179,10 +179,9 @@ void MainLoop()
 		g_field->Draw();
 
 		// 影の描画
-		g_player->RenderShadow();
-		g_slime->RenderShadow();
-		g_mosubi->RenderShadow();
-		g_rock->RenderShadow();
+		//g_player->RenderShadow();
+		//g_slime->RenderShadow();
+		//g_mosubi->RenderShadow();
 
 		// 全てのタスクを描画
 		TaskManager::Instance()->Render();
@@ -258,9 +257,11 @@ void Init()
 	g_rock = new Rock(0,
 		CVector3D(SCREEN_WIDTH * 0.40f, 100.0f, 150.0f));
 	g_rock = new Rock(0,
-		CVector3D(SCREEN_WIDTH * 0.40f, 100.0f, -150.0f));//*/
+		CVector3D(SCREEN_WIDTH * 0.40f, 100.0f, -150.0f));
+	//*/
 
-	/*// **障害物を一括生成**
+	/* これだとうまく動かない
+	// **障害物を一括生成**
 	struct ObstacleData {
 		float x, y, z;
 	};

@@ -283,6 +283,26 @@ void Player::StateAttack()
 // 死亡時の更新処理
 void Player::StateDeath()
 {
+	// ステップごとに処理を切り替え
+	switch (m_stateStep)
+	{
+		// ステップ0：死亡アニメーションに切り替え
+	case 0:
+		m_hp = 0;
+		mp_image->ChangeAnimation((int)EAnimType::Death, false);
+		m_stateStep++;
+		break;
+		// ステップ1：アニメーション終了待ち
+	case 1:
+		// 被ダメアニメーションが終了したら、死亡状態へ移行
+		if (mp_image->CheckAnimationEnd())
+		{
+			ChangeState(EState::Death);
+
+			Death();
+		}
+		break;
+	}
 }
 
 // スライディング時の更新処理
@@ -354,8 +374,24 @@ void Player::TakeDamage(int damage)
 	}
 	else
 	{
-		m_hp = 0;
-		Death();
+		// ステップごとに処理を切り替え
+		switch (m_stateStep)
+		{
+			// ステップ0：HPを0にして、被ダメアニメーションに切り替え
+		case 0:
+			m_hp = 0;
+			mp_image->ChangeAnimation((int)EAnimType::Damage, false);
+			m_stateStep++;
+			break;
+			// ステップ1：アニメーション終了待ち
+		case 1:
+			// 被ダメアニメーションが終了したら、死亡状態へ移行
+			if (mp_image->CheckAnimationEnd())
+			{
+				ChangeState(EState::Death);
+			}
+			break;
+		}
 	}
 }
 
