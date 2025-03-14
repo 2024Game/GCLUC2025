@@ -87,7 +87,7 @@ Player::Player(const CVector3D& pos)
 	, m_invincibleTime(0.0f)
 {
 	m_hp = 3; // UI に合わせて初期HPを3に
-
+	s_isMove = false;
 	// HPを共有
 	sHp = m_hp;
 	//
@@ -188,6 +188,8 @@ bool Player::UpdateMove()
 		mp_image->SetFlipH(false);
 		isMove = true;
 	}
+
+	//s_isMove = isMove;
 
 	return isMove;
 }
@@ -435,9 +437,16 @@ int Player::Hp()
 	return sHp;
 }
 
+bool Player::s_isMove = false;
+bool Player::IsMove()
+{
+	return s_isMove;
+}
+
 // 更新処理
 void Player::Update()
 {
+	s_isMove = !m_isInvincible;
 	// 無敵状態の時間をカウントダウン
 	if (m_isInvincible)
 	{

@@ -340,6 +340,21 @@ void Player::TakeDamage(int damage) {
 	}
 }
 
+float Player::GetChipSizeX()
+{
+	return CHIP_SIZE_W / 4;
+}
+
+float Player::GetChipSizeY()
+{
+	return 150.0f;
+}
+
+float Player::GetChipSizeZ()
+{
+	return CHIP_SIZE_H / 4;
+}
+
 // XVˆ—
 void Player::Update()
 {

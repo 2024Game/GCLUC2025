@@ -72,3 +72,16 @@ void ObjectBase::RenderShadow()
 	mp_shadowImg->SetPos(CalcScreenPos(true));
 	mp_shadowImg->Draw();
 }
+
+float ObjectBase::GetChipSizeX()
+{
+	return 0.0f;
+}
+float ObjectBase::GetChipSizeY()
+{
+	return 0.0f;
+}
+float ObjectBase::GetChipSizeZ()
+{
+	return 0.0f;
+}

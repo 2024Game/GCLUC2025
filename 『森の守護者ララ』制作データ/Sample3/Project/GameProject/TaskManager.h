@@ -27,6 +27,13 @@ public:
 	// リストに登録されているタスクを描画
 	void Render();
 
+	//　当たっているかのチェック
+	void CheckCollisions();
+	//　当たっているフラグ
+	bool IsColliding(ObjectBase* objA, ObjectBase* objB);
+	//　めり込んでいる分を押し戻す
+	void ResolveCollision(ObjectBase* objA, ObjectBase* objB);
+
 private:
 	// コンストラクタ
 	TaskManager();

@@ -2,6 +2,12 @@
 #include "Task.h"
 #include "ObjectBase.h"
 
+#include <algorithm>
+#include <Player.h>
+
+#undef min
+#undef max
+
 // TaskManagerのインスタンスの静的なメンバ変数を定義
 TaskManager* TaskManager::ms_instance = nullptr;
 
@@ -181,4 +187,120 @@ void TaskManager::Render()
 		if (task->IsEnable() && task->IsShow())
 		task->Render();
 	}
+}
+
+void TaskManager::CheckCollisions()
+{
+	// m_objectList内の総当たりチェック
+	for (auto itrA = m_objectList.begin(); itrA != m_objectList.end(); ++itrA)
+	{
+		for (auto itrB = std::next(itrA); itrB != m_objectList.end(); ++itrB)
+		{
+			ObjectBase* objA = dynamic_cast<ObjectBase*>(*itrA);
+			ObjectBase* objB = dynamic_cast<ObjectBase*>(*itrB);
+
+			if (objA && objB)
+			{
+				if (dynamic_cast<Player*>(objA))
+				{
+
+				}
+				else
+				{
+					ObjectBase* objC = objB;
+					objB = objA;
+					objA = objC;
+				}
+				// 衝突判定
+				if (IsColliding(objA, objB))
+				{
+					// 衝突解消（押し出し処理）を実行
+					ResolveCollision(objA, objB);
+				}
+			}
+		}
+	}
+}
+
+bool TaskManager::IsColliding(ObjectBase* objA, ObjectBase* objB)
+{
+	// 各オブジェクトのCHIP_SIZEを取得
+	float chipSizeAx = objA->GetChipSizeX();
+	float chipSizeAy = objA->GetChipSizeY();
+	float chipSizeAz = objA->GetChipSizeZ();
+	float chipSizeBx = objB->GetChipSizeX();
+	float chipSizeBy = objB->GetChipSizeY();
+	float chipSizeBz = objB->GetChipSizeZ();
+
+	// オブジェクトの位置を取得
+	auto posA = objA->GetPos();
+	auto posB = objB->GetPos();
+
+	// AABBによる衝突判定
+	bool isXOverlap = !(posA.x + chipSizeAx < posB.x || posA.x > posB.x + chipSizeBx);
+	bool isZOverlap = !(posA.z + chipSizeAz < posB.z || posA.z > posB.z + chipSizeBz);
+	bool isYOverlap = !(posA.y + chipSizeAy < posB.y || posA.y > posB.y + chipSizeBy);
+
+	return isXOverlap && isZOverlap && isYOverlap;
+}
+
+void TaskManager::ResolveCollision(ObjectBase* objA, ObjectBase* objB)
+{
+	// 各オブジェクトのCHIP_SIZEを取得
+	float chipSizeAx = objA->GetChipSizeX();
+	float chipSizeAy = objA->GetChipSizeY();
+	float chipSizeAz = objA->GetChipSizeZ();
+	float chipSizeBx = objB->GetChipSizeX();
+	float chipSizeBy = objB->GetChipSizeY();
+	float chipSizeBz = objB->GetChipSizeZ();
+
+	// 位置を取得
+	auto posA = objA->GetPos();
+	auto posB = objB->GetPos();
+
+	// X方向とY方向の重なりを計算
+	float overlapX = std::min(posA.x + chipSizeAx, posB.x + chipSizeBx) - std::max(posA.x, posB.x);
+	float overlapZ = std::min(posA.z + chipSizeAz, posB.z + chipSizeBz) - std::max(posA.z, posB.z);
+	float overlapY = std::min(posA.y + chipSizeAy, posB.y + chipSizeBy) - std::max(posA.y, posB.y);
+
+	// 最小の重なり方向に基づいて押し出し処理を実行
+	if (overlapX < overlapZ && overlapX < overlapY)
+	{
+		// X方向に押し出し
+		if (posA.x < posB.x)
+		{
+			posA.x -= overlapX;
+		}
+		else
+		{
+			posA.x += overlapX;
+		}
+	}
+	else if (overlapZ < overlapX && overlapZ < overlapY)
+	{
+		// Z方向に押し出し
+		if (posA.z < posB.z)
+		{
+			posA.z -= overlapZ;
+		}
+		else
+		{
+			posA.z += overlapZ;
+		}
+	}
+	else
+	{
+		// Y方向に押し出し
+		if (posA.y < posB.y)
+		{
+			posA.y -= overlapY;
+		}
+		else
+		{
+			posA.y += overlapY;
+		}
+	}
+
+	// 更新された位置をセット
+	objA->SetPos(posA);
 }

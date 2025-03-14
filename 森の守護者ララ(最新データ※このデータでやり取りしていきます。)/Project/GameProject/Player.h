@@ -24,7 +24,10 @@ public:
 
 	// HP‚ğæ“¾(’Ç‰Á)
 	static int Hp();
-	//
+
+	// isMove‚Ìæ“¾
+	static bool IsMove();
+
 
 private:
 	// ó‘Ô
@@ -80,4 +83,5 @@ private:
 	// HP(‹¤—L—p)
 	static int sHp;
 	//
+	static bool s_isMove;
 };

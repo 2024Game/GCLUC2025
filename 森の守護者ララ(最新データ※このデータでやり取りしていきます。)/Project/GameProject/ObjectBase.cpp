@@ -1,6 +1,8 @@
 #include "ObjectBase.h"
 #define FIELD_CENTER_Z (SCREEN_HEIGHT * 0.75f)
 
+#include "Player.h"
+
 // コンストラクタ
 ObjectBase::ObjectBase()
 	: ObjectBase(CVector3D::zero)
@@ -48,10 +50,17 @@ float testScrollX = 0.0f;
 CVector2D ObjectBase::CalcScreenPos(bool grounded) const
 {
 	CVector2D ret;
-	
-	// X座標はそのまま設定
+
+	if (Player::IsMove())
+	{
+		testScrollX += 1.0;
+	}
+	else
+	{
+		// 移動していない場合は変更なし
+	}
+
 	ret.x = m_pos.x - testScrollX;
-	testScrollX += 1.0 ;
 
 	// 通常座標を求める場合
 	if (!grounded)

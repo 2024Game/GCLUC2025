@@ -25,7 +25,8 @@ void UI::InitHp(const char* hpTexture, int maxHP, int iconWidth, int iconHeight)
 }
 
 // マナアイコンの設定
-void UI::InitMana(const char* manaTexture, int iconWidth, int iconHeight) {
+void UI::InitMana(const char* manaTexture, int iconWidth, int iconHeight)
+{
     m_currentMana = 1;  // 初期マナは 0
     m_manaIcons.clear();
 
@@ -43,6 +44,7 @@ void UI::SetElapsedTime(float time) {
 }
 
 // UIの表示
+
 void UI::Render()
 {
     // 文字列の作成
@@ -55,12 +57,14 @@ void UI::Render()
     FONT("customFont")->Draw(620, 100, 0.8f, 0.3f, 0.5f, timeText, "Time: %.2f sec", m_elapsedTime);
 
     // HPアイコン描画
-    for (int i = 0; i < m_currentHP; ++i) {
+    for (int i = 0; i < m_currentHP; ++i)
+    {
         m_hpIcons[i].Draw();
     }
 
     // マナアイコン描画（1つだけ表示）
-    if (m_currentMana > 0 && !m_manaIcons.empty()) {
+    if (m_currentMana > 0 && !m_manaIcons.empty()) 
+    {
         m_manaIcons[0].Draw();
     }
 }

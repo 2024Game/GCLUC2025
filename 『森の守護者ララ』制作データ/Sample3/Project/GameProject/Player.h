@@ -17,6 +17,10 @@ public:
 
 	void TakeDamage(int damage) override; // TakeDamage をオーバーライド
 
+	//　キャラのサイズをもとに当たり判定のサイズを返す
+	float GetChipSizeX()override; //　横幅
+	float GetChipSizeY()override; //　奥行き
+	float GetChipSizeZ()override; //　高さ
 private:
 	// 状態
 	enum class EState

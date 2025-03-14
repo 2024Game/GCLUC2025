@@ -26,6 +26,13 @@ public:
 	// 影描画
 	virtual void RenderShadow();
 
+	//　オブジェクトのサイズをもとに当たり判定の横幅のサイズを返す
+	virtual float GetChipSizeX();
+	//　オブジェクトのサイズをもとに当たり判定の奥行きのサイズを返す
+	virtual float GetChipSizeY();
+	//　オブジェクトのサイズをもとに当たり判定の高さのサイズを返す
+	virtual float GetChipSizeZ();
+
 protected:
 	CVector3D m_pos;		// オブジェクトの座標
 	bool m_isGrounded;		// 地面に接地してあるかどうか

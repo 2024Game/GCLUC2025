@@ -94,12 +94,14 @@ void MainLoop()
 				CVector3D(SCREEN_WIDTH * 0.0f, 0.0f, 0.0f));
 
 			// **障害物を一括生成**
-			struct ObstacleData {
+			struct ObstacleData
+			{
 				float x, y, z;
 			};
 
 			// **スライムの配置**
-			std::vector<ObstacleData> slimePositions = {
+			std::vector<ObstacleData> slimePositions =
+			{
 				{SCREEN_WIDTH * 0.40f, 0.0f, 0.0f},
 				{SCREEN_WIDTH * 0.60f, 50.0f, 0.0f}
 			};
@@ -108,7 +110,8 @@ void MainLoop()
 			}
 
 			// **モスビの配置**
-			std::vector<ObstacleData> mosubiPositions = {
+			std::vector<ObstacleData> mosubiPositions =
+			{
 				{SCREEN_WIDTH * 0.80f, 160.0f, 0.0f},
 				{SCREEN_WIDTH * 0.80f, 400.0f, 0.0f}
 			};
@@ -117,7 +120,8 @@ void MainLoop()
 			}
 
 			// **岩の配置**
-			std::vector<ObstacleData> rockPositions = {
+			std::vector<ObstacleData> rockPositions =
+			{
 				{SCREEN_WIDTH * 0.40f, 100.0f, 150.0f},
 				{SCREEN_WIDTH * 0.40f, 100.0f, -150.0f}
 			};
@@ -249,9 +253,7 @@ void Init()
 
 	// モスビ
 	g_mosubi = new Mosubi(0,
-		CVector3D(SCREEN_WIDTH * 0.80f, 160.0f, 0.0f));
-	//g_mosubi = new Mosubi(0,
-		//CVector3D(SCREEN_WIDTH * 0.80f, 400.0f, 0.0f));
+		CVector3D(SCREEN_WIDTH * 0.80f, 160.0f, 0.0f));\
 
 	// 岩
 	g_rock = new Rock(0,
