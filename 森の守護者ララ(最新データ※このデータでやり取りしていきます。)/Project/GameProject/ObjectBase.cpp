@@ -15,7 +15,7 @@ ObjectBase::ObjectBase(const CVector3D& pos)
 	, mp_shadowImg(nullptr)
 {
 	// ‰e‚Ì‰æ‘œ‚ð“Ç‚Ýž‚Ý
-	mp_shadowImg = CImage::CreateImage("shadow.png");
+	mp_shadowImg = CImage::CreateImage("shadow1.png");
 	mp_shadowImg->SetCenter(mp_shadowImg->GetSize() * 0.5f);
 }
 

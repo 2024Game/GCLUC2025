@@ -38,6 +38,13 @@ EState mState;
 bool isGame; // ゲームの判定
 bool isStart; // 経過時間の判定
 
+
+// 障害物のリスト
+std::vector<Rock*> g_rocks;
+std::vector<Slime*> g_slimes;
+std::vector<Mosubi*> g_mosubis;
+
+
 void MainLoop()
 {
 	//--------------------------------------------------------------
@@ -86,22 +93,37 @@ void MainLoop()
 			g_player = new Player(
 				CVector3D(SCREEN_WIDTH * 0.0f, 0.0f, 0.0f));
 
-			// 障害物を生成
-			// キューゴン
-			g_slime = new Slime(0,
-				CVector3D(SCREEN_WIDTH * 0.40f, 0.0f, 0.0f));
+			// **障害物を一括生成**
+			struct ObstacleData {
+				float x, y, z;
+			};
 
-			// モスビ
-			g_mosubi = new Mosubi(0,
-				CVector3D(SCREEN_WIDTH * 0.80f, 160.0f, 0.0f));
-			//g_mosubi = new Mosubi(0,
-				//CVector3D(SCREEN_WIDTH * 0.80f, 400.0f, 0.0f));
+			// **スライムの配置**
+			std::vector<ObstacleData> slimePositions = {
+				{SCREEN_WIDTH * 0.40f, 0.0f, 0.0f},
+				{SCREEN_WIDTH * 0.60f, 50.0f, 0.0f}
+			};
+			for (auto& pos : slimePositions) {
+				g_slimes.push_back(new Slime(0, CVector3D(pos.x, pos.y, pos.z)));
+			}
 
-			// 岩
-			g_rock = new Rock(0,
-				CVector3D(SCREEN_WIDTH * 0.40f, 100.0f, 150.0f));
-			g_rock = new Rock(0,
-				CVector3D(SCREEN_WIDTH * 0.40f, 100.0f, -150.0f));
+			// **モスビの配置**
+			std::vector<ObstacleData> mosubiPositions = {
+				{SCREEN_WIDTH * 0.80f, 160.0f, 0.0f},
+				{SCREEN_WIDTH * 0.80f, 400.0f, 0.0f}
+			};
+			for (auto& pos : mosubiPositions) {
+				g_mosubis.push_back(new Mosubi(0, CVector3D(pos.x, pos.y, pos.z)));
+			}
+
+			// **岩の配置**
+			std::vector<ObstacleData> rockPositions = {
+				{SCREEN_WIDTH * 0.40f, 100.0f, 150.0f},
+				{SCREEN_WIDTH * 0.40f, 100.0f, -150.0f}
+			};
+			for (auto& pos : rockPositions) {
+				g_rocks.push_back(new Rock(0, CVector3D(pos.x, pos.y, pos.z)));
+			}
 
 			// UI関係
 			// UI を生成
@@ -155,6 +177,12 @@ void MainLoop()
 
 		// フィールド画像を描画
 		g_field->Draw();
+
+		// 影の描画
+		g_player->RenderShadow();
+		g_slime->RenderShadow();
+		g_mosubi->RenderShadow();
+		g_rock->RenderShadow();
 
 		// 全てのタスクを描画
 		TaskManager::Instance()->Render();
@@ -214,6 +242,7 @@ void Init()
 	g_player = new Player(
 		CVector3D(SCREEN_WIDTH * 0.0f, 0.0f, 0.0f));
 
+	///*
 	// 障害物を生成
 	// キューゴン
 	g_slime = new Slime(0,
@@ -229,7 +258,39 @@ void Init()
 	g_rock = new Rock(0,
 		CVector3D(SCREEN_WIDTH * 0.40f, 100.0f, 150.0f));
 	g_rock = new Rock(0,
-		CVector3D(SCREEN_WIDTH * 0.40f, 100.0f, -150.0f));
+		CVector3D(SCREEN_WIDTH * 0.40f, 100.0f, -150.0f));//*/
+
+	/*// **障害物を一括生成**
+	struct ObstacleData {
+		float x, y, z;
+	};
+
+	// **スライムの配置**
+	std::vector<ObstacleData> slimePositions = {
+		{SCREEN_WIDTH * 0.40f, 0.0f, 0.0f},
+		{SCREEN_WIDTH * 0.60f, 50.0f, 0.0f}
+	};
+	for (auto& pos : slimePositions) {
+		g_slimes.push_back(new Slime(0, CVector3D(pos.x, pos.y, pos.z)));
+	}
+
+	// **モスビの配置**
+	std::vector<ObstacleData> mosubiPositions = {
+		{SCREEN_WIDTH * 0.80f, 160.0f, 0.0f},
+		{SCREEN_WIDTH * 0.80f, 400.0f, 0.0f}
+	};
+	for (auto& pos : mosubiPositions) {
+		g_mosubis.push_back(new Mosubi(0, CVector3D(pos.x, pos.y, pos.z)));
+	}
+
+	// **岩の配置**
+	std::vector<ObstacleData> rockPositions = {
+		{SCREEN_WIDTH * 0.40f, 100.0f, 150.0f},
+		{SCREEN_WIDTH * 0.40f, 100.0f, -150.0f}
+	};
+	for (auto& pos : rockPositions) {
+		g_rocks.push_back(new Rock(0, CVector3D(pos.x, pos.y, pos.z)));
+	}*/
 
 	// UI関係
 	// UI を生成
