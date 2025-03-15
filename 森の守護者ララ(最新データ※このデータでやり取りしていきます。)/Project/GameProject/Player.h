@@ -84,4 +84,6 @@ private:
 	static int sHp;
 	//
 	static bool s_isMove;
+
+	int m_lane;  // 現在のレーン（0:奥, 1:中央, 2:手前）
 };

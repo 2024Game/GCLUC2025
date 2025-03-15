@@ -266,7 +266,7 @@ void Init()
 
 	// ƒvƒŒƒCƒ„[‚ğ¶¬
 	g_player = new Player(
-		CVector3D(SCREEN_WIDTH * 0.0f, 0.0f, 0.0f));
+		CVector3D(SCREEN_WIDTH * 0.0f, 0.0f, -80.0f));
 
 	///*
 	// áŠQ•¨‚ğ¶¬

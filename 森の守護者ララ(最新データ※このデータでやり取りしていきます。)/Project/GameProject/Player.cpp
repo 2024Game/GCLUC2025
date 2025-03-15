@@ -4,7 +4,7 @@
 //#define CENTER_POS CVector2D(1000.0f, 400.0f)	// 中心座標
 #define CENTER_POS CVector2D(0.0f, 300.0f)	// 中心座標
 #define MOVE_SPEED_X 5.0f	// 横方向の移動速度
-#define MOVE_SPEED_Z 150.0f	// 奥方向の移動速度
+//#define MOVE_SPEED_Z 200.0f	// 奥方向の移動速度
 #define JUMP_SPEED 14.0f	// ジャンプ速度
 //#define GRAVITY -0.175f		// 重力
 #define GRAVITY -0.23f		// 重力
@@ -58,9 +58,9 @@ TexAnimData Player::ANIM_DATA[(int)EAnimType::Num] =
 		new TexAnim[5]
 		{
 			{9, 6},
-			{10, 10},
+			{10, 20},
 			{11, 60},
-			{12, 10},
+			{12, 20},
 			{13, 6},
 		},
 		5
@@ -85,6 +85,7 @@ Player::Player(const CVector3D& pos)
 	, mp_image(nullptr)
 	, m_isInvincible(false)
 	, m_invincibleTime(0.0f)
+	, m_lane(1) // 初期レーンを中央に設定
 {
 	m_hp = 3; // UI に合わせて初期HPを3に
 	s_isMove = false;
@@ -124,45 +125,31 @@ bool Player::UpdateMove()
 {
 	bool isMove = false;
 
-	/* 左右の移動はいらないので、ここは削除
-	// 左キーを押している間
-	if (HOLD(CInput::eLeft))
+	// ジャンプ中はレーン移動を無効化
+	if (m_state == EState::Jump)
 	{
-		// 左方向へ移動
-		m_pos.x -= MOVE_SPEED_X;
-		mp_image->SetFlipH(true);
-		isMove = true;
+		// ジャンプ中はレーン移動をしない
 	}
-	// 右キーを押している間
-	else if (HOLD(CInput::eRight))
+	else
 	{
-		// 右方向へ移動
-		m_pos.x += MOVE_SPEED_X;
-		mp_image->SetFlipH(false);
-		isMove = true;
-	}
-	*/
+		// レーンのZ座標（3つのレーンの位置を指定）
+		const float LANE_POS_Z[] = { -250.0f, -80.0f, 90.0f };
+		const int LANE_COUNT = 3;  // レーンの数
 
-	// 仮で作成
-	// 左クリックで被ダメ(HPダウン)
-	if (PUSH(CInput::eMouseL))
-	{
-		ChangeState(EState::Damage);
-	}
-
-
-
-	// 上キーを押した瞬間にZ座標を減らす（奥へ移動）
-	if (PUSH(CInput::eUp) && m_pos.z > -150.0f)
-	{
-		m_pos.z -= MOVE_SPEED_Z;
-		isMove = true;
-	}
-	// 下キーを押した瞬間にZ座標を増やす（手前へ移動）
-	else if (PUSH(CInput::eDown) && m_pos.z < 150.0f)
-	{
-		m_pos.z += MOVE_SPEED_Z;
-		isMove = true;
+		// 上キーを押したら1つ奥のレーンへ移動
+		if (PUSH(CInput::eUp) && m_lane > 0)
+		{
+			m_lane--;  // レーンを1つ減らす（奥へ）
+			m_pos.z = LANE_POS_Z[m_lane];  // 新しいZ座標を設定
+			isMove = true;
+		}
+		// 下キーを押したら1つ手前のレーンへ移動
+		else if (PUSH(CInput::eDown) && m_lane < LANE_COUNT - 1)
+		{
+			m_lane++;  // レーンを1つ増やす（手前へ）
+			m_pos.z = LANE_POS_Z[m_lane];  // 新しいZ座標を設定
+			isMove = true;
+		}
 	}
 
 	// スライディング中は速く移動
