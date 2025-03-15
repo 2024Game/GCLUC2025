@@ -39,8 +39,8 @@ TexAnimData Player::ANIM_DATA[(int)EAnimType::Num] =
 	{
 		new TexAnim[2]
 		{
-			{45, 12},
-			{46, 12},
+			{45, 30},
+			{46, 30},
 		},
 		2
 	},
@@ -288,10 +288,9 @@ void Player::StateDeath()
 	// ステップごとに処理を切り替え
 	switch (m_stateStep)
 	{
-		// ステップ0：死亡アニメーションに切り替え
+		// ステップ0：被ダメアニメーションに切り替え
 	case 0:
-		m_hp = 0;
-		mp_image->ChangeAnimation((int)EAnimType::Death, false);
+		mp_image->ChangeAnimation((int)EAnimType::Damage, false);
 		m_stateStep++;
 		break;
 		// ステップ1：アニメーション終了待ち
@@ -299,9 +298,21 @@ void Player::StateDeath()
 		// 被ダメアニメーションが終了したら、死亡状態へ移行
 		if (mp_image->CheckAnimationEnd())
 		{
-			ChangeState(EState::Death);
-
-			Death();
+			m_stateStep++;
+		}
+		break;
+		// ステップ0：死亡アニメーションに切り替え
+	case 2:
+		printf("Hello, World!\n");
+		mp_image->ChangeAnimation((int)EAnimType::Death, false);
+		m_stateStep++;
+		break;
+		// ステップ1：アニメーション終了待ち
+	case 3:
+		// 被ダメアニメーションが終了したら、ゲームオーバー画面へ移行
+		if (mp_image->CheckAnimationEnd())
+		{
+			//Death();
 		}
 		break;
 	}
@@ -360,7 +371,7 @@ void Player::StateDamage()
 // ダメージを受ける処理
 void Player::TakeDamage(int damage)
 {
-	if (m_isInvincible || m_hp == 0) return; // 無敵中、またはHPが0なら何もしない
+	if (m_isInvincible) return; // 無敵中なら何もしない
 
 	if (m_hp > damage)
 	{
@@ -376,24 +387,10 @@ void Player::TakeDamage(int damage)
 	}
 	else
 	{
-		// ステップごとに処理を切り替え
-		switch (m_stateStep)
-		{
-			// ステップ0：HPを0にして、被ダメアニメーションに切り替え
-		case 0:
-			m_hp = 0;
-			mp_image->ChangeAnimation((int)EAnimType::Damage, false);
-			m_stateStep++;
-			break;
-			// ステップ1：アニメーション終了待ち
-		case 1:
-			// 被ダメアニメーションが終了したら、死亡状態へ移行
-			if (mp_image->CheckAnimationEnd())
-			{
-				ChangeState(EState::Death);
-			}
-			break;
-		}
+		// HPを0にして、被ダメアニメーション+死亡アニメーションに切り替え
+		m_hp = 0;
+		sHp = m_hp; // HPを共有
+		ChangeState(EState::Death); // 死亡状態へ移行
 	}
 }
 

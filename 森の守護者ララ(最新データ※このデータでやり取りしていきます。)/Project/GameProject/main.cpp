@@ -37,13 +37,15 @@ EState mState;
 
 bool isGame; // ゲームの判定
 bool isStart; // 経過時間の判定
+bool isDeath = false; // 死亡の判定(仮)
+float deathCount = 0.0f; // 死亡カウント(仮)
 
-
+/*
 // 障害物のリスト
 std::vector<Rock*> g_rocks;
 std::vector<Slime*> g_slimes;
 std::vector<Mosubi*> g_mosubis;
-
+*/
 
 void MainLoop()
 {
@@ -75,82 +77,92 @@ void MainLoop()
 		break;
 	case EState::ECLEAR: // ゲームクリア状態だったら、
 		isGame = false; // ゲーム(MainLoop())を止める
-		if (PUSH(CInput::eButton10)) // Enterキーが押されたら、
-		{
 
+		// Enterキーを押すとゲーム終了
+		if (PUSH(CInput::eButton10)) // Enterキーが押されたら
+		{
+			// **クリーンアップ処理**
+			TaskManager::ClearInstance(); // ゲームのインスタンスを削除
+
+			// **プログラムを安全に終了**
+			PostQuitMessage(0); // Windowsアプリの正しい終了方法
+			// exit(0); // 代わりに exit(0) でもOK
+		}
+
+		/*if (PUSH(CInput::eButton10)) // Enterキーが押されたら、
+		{
+			// **ゲームの初期化
 			// ゲームのインスタンス削除(追加)
 			TaskManager::ClearInstance(); // 既存のインスタンスを削除
 
 			// ゲームのインスタンス作成(追加)
 			TaskManager::Instance(); // 新しいインスタンスを作成
 
-			// **ゲームの初期化**
 			// ここでプレイヤーや敵キャラを再作成(Init()を呼ぶとエラーになる)
 			// フィールドの画像を生成
-			g_field = CImage::CreateImage("background.png");
+			
 
 			// プレイヤーを生成
-			g_player = new Player(
-				CVector3D(SCREEN_WIDTH * 0.0f, 0.0f, 0.0f));
+			
 
-			// **障害物を一括生成**
-			struct ObstacleData
-			{
-				float x, y, z;
-			};
-
-			// **スライムの配置**
-			std::vector<ObstacleData> slimePositions =
-			{
-				{SCREEN_WIDTH * 0.40f, 0.0f, 0.0f},
-				{SCREEN_WIDTH * 0.60f, 50.0f, 0.0f}
-			};
-			for (auto& pos : slimePositions) {
-				g_slimes.push_back(new Slime(0, CVector3D(pos.x, pos.y, pos.z)));
-			}
-
-			// **モスビの配置**
-			std::vector<ObstacleData> mosubiPositions =
-			{
-				{SCREEN_WIDTH * 0.80f, 160.0f, 0.0f},
-				{SCREEN_WIDTH * 0.80f, 400.0f, 0.0f}
-			};
-			for (auto& pos : mosubiPositions) {
-				g_mosubis.push_back(new Mosubi(0, CVector3D(pos.x, pos.y, pos.z)));
-			}
-
-			// **岩の配置**
-			std::vector<ObstacleData> rockPositions =
-			{
-				{SCREEN_WIDTH * 0.40f, 100.0f, 150.0f},
-				{SCREEN_WIDTH * 0.40f, 100.0f, -150.0f}
-			};
-			for (auto& pos : rockPositions) {
-				g_rocks.push_back(new Rock(0, CVector3D(pos.x, pos.y, pos.z)));
-			}
-
+			// 障害物を生成
+			
 			// UI関係
 			// UI を生成
-			g_ui = new UI();
-			g_ui->InitHp("HPUI.png", Player::Hp(), 100, 100); // HPアイコン画像をセット
-			g_ui->InitMana("mana.png", 100, 100); // マナアイコン画像をセット
+			
 
 			// 全てのタスクを更新
-			TaskManager::Instance()->Update();
+			TaskManager::Instance()->Update();			
 
-
-			//isStart = false; // 経過時間(タイム)を止める
 			mState = EState::ESTART; // ゲームスタート状態にする
-		}
+		}*/
 		break;
 	case EState::EOVER: // ゲームオーバー状態だったら、
 		isGame = false; // ゲーム(MainLoop())を止める
-		if (PUSH(CInput::eButton10)) // Enterキーが押されたら、
+
+		// Enterキーを押すとゲーム終了
+		if (PUSH(CInput::eButton10)) // Enterキーが押されたら
 		{
-			isStart = false; // 経過時間(タイム)を止める
-			mState = EState::ESTART; // ゲームスタート状態にする
+			// **クリーンアップ処理**
+			TaskManager::ClearInstance(); // ゲームのインスタンスを削除
+			/*if (g_player) {
+				delete g_player;
+				g_player = nullptr;
+			}
+			if (g_field) {
+				delete g_field;
+				g_field = nullptr;
+			}
+			if (g_ui) {
+				delete g_ui;
+				g_ui = nullptr;
+			}
+			if (g_slime) {
+				delete g_slime;
+				g_slime = nullptr;
+			}
+			if (g_mosubi) {
+				delete g_mosubi;
+				g_mosubi = nullptr;
+			}
+			if (g_rock) {
+				delete g_rock;
+				g_rock = nullptr;
+			}*/
+
+			// **プログラムを安全に終了**
+			PostQuitMessage(0); // Windowsアプリの正しい終了方法
+			// exit(0); // 代わりに exit(0) でもOK
 		}
+
 		break;
+	}
+
+	// 死亡判定(仮)
+	if (isDeath)
+	{
+		mState = EState::EOVER;
+		isDeath = false;
 	}
 
 	// ゲーム中(EState::EPLAY)なら、以下を実行
@@ -183,9 +195,9 @@ void MainLoop()
 		g_field->Draw();
 
 		// 影の描画
-		//g_player->RenderShadow();
-		//g_slime->RenderShadow();
-		//g_mosubi->RenderShadow();
+		g_player->RenderShadow();
+		g_slime->RenderShadow();
+		g_mosubi->RenderShadow();
 
 		// 全てのタスクを描画
 		TaskManager::Instance()->Render();
@@ -196,6 +208,17 @@ void MainLoop()
 
 		// HPを共有
 		g_ui->SetHP(Player::Hp());
+
+		// 死亡判定(仮)
+		if (Player::Hp() == 0)
+		{
+			deathCount++;
+			if (deathCount >= 110.0f)
+			{
+				isDeath = true;
+				deathCount = 0.0f;
+			}
+		}
 
 		// デバッグ文字の描画
 		DebugPrint::Render();
@@ -253,48 +276,15 @@ void Init()
 
 	// モスビ
 	g_mosubi = new Mosubi(0,
-		CVector3D(SCREEN_WIDTH * 0.80f, 160.0f, 0.0f));\
+		CVector3D(SCREEN_WIDTH * 0.80f, 160.0f, 0.0f));
 
 	// 岩
 	g_rock = new Rock(0,
 		CVector3D(SCREEN_WIDTH * 0.40f, 100.0f, 150.0f));
 	g_rock = new Rock(0,
 		CVector3D(SCREEN_WIDTH * 0.40f, 100.0f, -150.0f));
-
-	//*/
-
-	/* これだとうまく動かない
-	// **障害物を一括生成**
-	struct ObstacleData {
-		float x, y, z;
-	};
-
-	// **スライムの配置**
-	std::vector<ObstacleData> slimePositions = {
-		{SCREEN_WIDTH * 0.40f, 0.0f, 0.0f},
-		{SCREEN_WIDTH * 0.60f, 50.0f, 0.0f}
-	};
-	for (auto& pos : slimePositions) {
-		g_slimes.push_back(new Slime(0, CVector3D(pos.x, pos.y, pos.z)));
-	}
-
-	// **モスビの配置**
-	std::vector<ObstacleData> mosubiPositions = {
-		{SCREEN_WIDTH * 0.80f, 160.0f, 0.0f},
-		{SCREEN_WIDTH * 0.80f, 400.0f, 0.0f}
-	};
-	for (auto& pos : mosubiPositions) {
-		g_mosubis.push_back(new Mosubi(0, CVector3D(pos.x, pos.y, pos.z)));
-	}
-
-	// **岩の配置**
-	std::vector<ObstacleData> rockPositions = {
-		{SCREEN_WIDTH * 0.40f, 100.0f, 150.0f},
-		{SCREEN_WIDTH * 0.40f, 100.0f, -150.0f}
-	};
-	for (auto& pos : rockPositions) {
-		g_rocks.push_back(new Rock(0, CVector3D(pos.x, pos.y, pos.z)));
-	}*/
+	g_rock = new Rock(0,
+		CVector3D(SCREEN_WIDTH * 0.80f, 100.0f, -150.0f));
 
 	// UI関係
 	// UI を生成
@@ -451,7 +441,7 @@ int __main(int* argcp, char** argv)
 		CFPS::Wait();
 
 		char title[32];
-		sprintf_s(title, "Sample3");
+		sprintf_s(title, "Lara, Guardian of the Forest");
 		glfwSetWindowTitle(GL::window, title);
 
 		glfwPollEvents();
